@@ -80,6 +80,7 @@ button:active {
 .user-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 15px;
   margin-bottom: 10px;
   background: #f8f9fa;
@@ -92,12 +93,29 @@ button:active {
   background: #e9ecef;
 }
 
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 .user-item strong {
   color: #667eea;
 }
 
 .user-item span {
   color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.delete-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  box-shadow: 0 5px 15px rgba(245, 101, 101, 0.4);
 }
 
 .error {
