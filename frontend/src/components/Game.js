@@ -22,9 +22,14 @@ const Game = () => {
 
   /**
    * Fetch game data from the server
+   * @param {boolean} isInitialLoad - Whether this is the first load (shows loading indicator)
    */
-  const fetchGame = async () => {
+  const fetchGame = async (isInitialLoad = false) => {
     try {
+      if (isInitialLoad) {
+        setLoading(true);
+      }
+
       const response = await fetch(`${API_URL}/api/games/${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -44,31 +49,26 @@ const Game = () => {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (isInitialLoad) {
+        setLoading(false);
+      }
     }
   };
 
-  // Load game on mount
+  // Load game on mount and set up continuous polling
   useEffect(() => {
-    fetchGame();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+    // Initial fetch with loading indicator
+    fetchGame(true);
 
-  // Set up polling for real-time updates
-  useEffect(() => {
-    // Only poll if game is waiting or in progress
-    if (!game || (game.status !== 'waiting' && game.status !== 'in_progress')) {
-      return;
-    }
-
-    // Poll for updates every 2 seconds
+    // Set up interval for continuous polling every 2 seconds
     const interval = setInterval(() => {
-      fetchGame();
+      fetchGame(false);
     }, 2000);
 
+    // Cleanup interval on unmount
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game?.status]);
+  }, [id]);
 
   /**
    * Handle cell click - make a move
