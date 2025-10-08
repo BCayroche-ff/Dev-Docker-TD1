@@ -14,7 +14,22 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
-    
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: appuser
+          POSTGRES_PASSWORD: apppassword
+          POSTGRES_DB: appdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -38,6 +53,12 @@ jobs:
 
       - name: Run backend tests
         working-directory: ./backend
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: appuser
+          DB_PASSWORD: apppassword
+          DB_NAME: appdb
         run: npm test --if-present
 
       - name: Run frontend tests
