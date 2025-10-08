@@ -31,6 +31,7 @@ This guide explains how to deploy the application using pre-built Docker images 
    ```bash
    DOCKER_USERNAME=your_dockerhub_username
    POSTGRES_PASSWORD=secure_password_here
+   JWT_SECRET=your-secure-random-string
    ```
 
 3. **Pull and start the application:**
@@ -87,11 +88,14 @@ You can customize the deployment by modifying the `.env` file:
 |----------|---------|-------------|
 | `DOCKER_USERNAME` | - | Docker Hub username (required) |
 | `POSTGRES_USER` | `appuser` | Database user |
-| `POSTGRES_PASSWORD` | `apppassword` | Database password |
+| `POSTGRES_PASSWORD` | `apppassword` | Database password (⚠️ change in production!) |
 | `POSTGRES_DB` | `appdb` | Database name |
-| `BACKEND_PORT` | `3001` | Backend port |
-| `FRONTEND_PORT` | `3000` | Frontend port |
-| `REACT_APP_API_URL` | `http://localhost:3001` | Backend API URL |
+| `DB_HOST` | `postgres` | Database host (service name) |
+| `DB_PORT` | `5432` | Database port |
+| `BACKEND_PORT` | `3001` | Backend port exposed on host |
+| `JWT_SECRET` | - | Secret key for JWT tokens (⚠️ required!) |
+| `FRONTEND_PORT` | `3000` | Frontend port exposed on host |
+| `REACT_APP_API_URL` | `http://localhost:3001` | Backend API URL for frontend |
 
 ### Troubleshooting
 

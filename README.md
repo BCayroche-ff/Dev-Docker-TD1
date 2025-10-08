@@ -36,10 +36,13 @@ Application de jeu de morpion en ligne avec authentification complète et systè
 │   │   └── game.js            # Routes de gestion des parties
 │   ├── __tests__/             # Tests backend (Jest + Supertest)
 │   │   ├── auth.test.js
-│   │   └── game.test.js
+│   │   ├── game.test.js
+│   │   └── server.test.js
 │   ├── server.js              # Point d'entrée du serveur
 │   ├── db.js                  # Configuration PostgreSQL
 │   ├── init.sql               # Schéma de base de données
+│   ├── jest.setup.js          # Configuration Jest
+│   ├── Dockerfile             # Image Docker backend
 │   └── package.json
 │
 ├── frontend/                   # Application React
@@ -53,32 +56,42 @@ Application de jeu de morpion en ligne avec authentification complète et systè
 │   │   │   └── AuthContext.js # Contexte d'authentification
 │   │   ├── App.js             # Composant principal avec routage
 │   │   └── index.js
+│   ├── nginx.conf             # Configuration Nginx
+│   ├── Dockerfile             # Image Docker frontend
 │   └── package.json
 │
 ├── .github/
 │   └── workflows/
 │       └── ci-cd.yml          # Pipeline CI/CD automatisée
 │
-├── docker-compose.yml          # Configuration Docker Compose
+├── docker-compose.yml          # Configuration Docker développement
+├── docker-compose.prod.yml     # Configuration Docker production
+├── .env                        # Variables d'environnement
+├── .env.prod.example          # Template de configuration production
+├── DEPLOYMENT.md              # Guide de déploiement production
 └── README.md
 ```
 
 ## Démarrage rapide
 
-### Avec Docker Compose (recommandé)
+### Développement avec Docker Compose (recommandé)
 
 ```bash
 # Construire et démarrer tous les services
-docker-compose up --build
+docker compose up --build
 
 # En arrière-plan
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 **Accès à l'application :**
 - Frontend : http://localhost:3000
 - Backend API : http://localhost:3001
 - Base de données PostgreSQL : localhost:5432
+
+### Production avec images pré-buildées
+
+Pour déployer l'application en production avec les images Docker Hub, consultez [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ### Sans Docker
 
@@ -184,32 +197,49 @@ Voir `backend/init.sql` pour le schéma détaillé avec commentaires.
 
 ## Variables d'environnement
 
-### Backend (.env)
+Le fichier `.env` à la racine du projet contient toutes les variables nécessaires :
 
 ```env
-PORT=3001
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=devdockerdb
-POSTGRES_HOST=db
+# Database Configuration
+POSTGRES_USER=appuser
+POSTGRES_PASSWORD=apppassword
+POSTGRES_DB=appdb
+DB_HOST=postgres
+DB_PORT=5432
+
+# Backend Configuration
+BACKEND_PORT=3001
 JWT_SECRET=your-secret-key-change-in-production
-```
 
-### Frontend
-
-```env
+# Frontend Configuration
+FRONTEND_PORT=3000
 REACT_APP_API_URL=http://localhost:3001
 ```
+
+**Variables expliquées :**
+- `BACKEND_PORT` : Port exposé sur l'hôte pour accéder au backend
+- `FRONTEND_PORT` : Port exposé sur l'hôte pour accéder au frontend
+- Le backend écoute toujours sur le port 3001 **à l'intérieur** du conteneur
+
+**Note :** Pour la production, copiez `.env.prod.example` vers `.env` et ajustez les valeurs, notamment :
+- `DOCKER_USERNAME` : votre nom d'utilisateur Docker Hub
+- `POSTGRES_PASSWORD` : un mot de passe sécurisé
+- `JWT_SECRET` : une chaîne aléatoire sécurisée pour les tokens JWT
 
 ## Pipeline CI/CD
 
 Le projet utilise GitHub Actions pour :
+- Initialiser une base de données PostgreSQL pour les tests
 - Exécuter les tests backend et frontend automatiquement
-- Construire les images Docker
+- Construire les images Docker optimisées
 - Pousser les images sur Docker Hub (branches main et develop)
 - Générer des rapports de déploiement
 
-Voir `.github/workflows/ci-cd.yml` pour les détails.
+**Images Docker Hub :**
+- `${DOCKER_USERNAME}/dev-docker-backend:latest`
+- `${DOCKER_USERNAME}/dev-docker-frontend:latest`
+
+Voir `.github/workflows/ci-cd.yml` pour les détails de la configuration.
 
 ## Comment jouer
 
@@ -224,11 +254,14 @@ Voir `.github/workflows/ci-cd.yml` pour les détails.
 ## Arrêter l'application
 
 ```bash
-# Arrêter les conteneurs
-docker-compose down
+# Arrêter les conteneurs (développement)
+docker compose down
+
+# Arrêter les conteneurs (production)
+docker compose -f docker-compose.prod.yml down
 
 # Arrêter et supprimer les volumes (⚠️ supprime les données)
-docker-compose down -v
+docker compose down -v
 ```
 
 ## Contribution
@@ -238,4 +271,11 @@ Les commits suivent la convention Conventional Commits :
 - `fix:` - Correction de bug
 - `test:` - Ajout ou modification de tests
 - `docs:` - Documentation
+- `ci:` - Configuration CI/CD
 - `chore:` - Maintenance
+
+## Ressources supplémentaires
+
+- [Guide de déploiement production](./DEPLOYMENT.md) - Déploiement avec images Docker Hub
+- [Workflow CI/CD](./.github/workflows/ci-cd.yml) - Configuration GitHub Actions
+- [Schéma de base de données](./backend/init.sql) - Structure SQL complète
