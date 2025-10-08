@@ -48,20 +48,27 @@ const Game = () => {
     }
   };
 
-  // Load game on mount and refresh periodically
+  // Load game on mount
   useEffect(() => {
     fetchGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
-    // Poll for updates every 2 seconds if game is in progress
+  // Set up polling for real-time updates
+  useEffect(() => {
+    // Only poll if game is waiting or in progress
+    if (!game || (game.status !== 'waiting' && game.status !== 'in_progress')) {
+      return;
+    }
+
+    // Poll for updates every 2 seconds
     const interval = setInterval(() => {
-      if (game?.status === 'in_progress' || game?.status === 'waiting') {
-        fetchGame();
-      }
+      fetchGame();
     }, 2000);
 
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [game?.status]);
 
   /**
    * Handle cell click - make a move
