@@ -1,54 +1,28 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 import App from './App';
 
-global.fetch = jest.fn();
+/**
+ * App Component Tests
+ * Tests for main application routing and structure
+ */
 
 describe('App Component', () => {
-  beforeEach(() => {
-    fetch.mockClear();
+  it('should render without crashing', () => {
+    render(<App />);
+    expect(screen.getByText(/Tic-Tac-Toe/i)).toBeInTheDocument();
   });
 
-  test('renders user management title', () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => []
-    });
-
+  it('should display login form by default for unauthenticated users', () => {
     render(<App />);
-    const titleElement = screen.getByText(/User Management App/i);
-    expect(titleElement).toBeInTheDocument();
+    expect(screen.getByLabelText(/username or email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
   });
 
-  test('displays add user form', () => {
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => []
-    });
-
+  it('should have link to register page', () => {
     render(<App />);
-    expect(screen.getByPlaceholderText(/Name/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Email/i)).toBeInTheDocument();
-    expect(screen.getByText(/Add User/i)).toBeInTheDocument();
-  });
-
-  test('fetches and displays users', async () => {
-    const mockUsers = [
-      { id: 1, name: 'Alice', email: 'alice@example.com' },
-      { id: 2, name: 'Bob', email: 'bob@example.com' }
-    ];
-
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockUsers
-    });
-
-    render(<App />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Alice')).toBeInTheDocument();
-      expect(screen.getByText('alice@example.com')).toBeInTheDocument();
-      expect(screen.getByText('Bob')).toBeInTheDocument();
-      expect(screen.getByText('bob@example.com')).toBeInTheDocument();
-    });
+    const registerLink = screen.getByText(/register here/i);
+    expect(registerLink).toBeInTheDocument();
   });
 });
