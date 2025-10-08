@@ -26,14 +26,15 @@ services:
     build: ./backend
     container_name: nodejs-backend
     ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - "${BACKEND_PORT}:3001"
     environment:
-      - PORT=${BACKEND_PORT}
+      - PORT=3001
       - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
+      - DB_PORT=5432
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_NAME=${POSTGRES_DB}
+      - JWT_SECRET=${JWT_SECRET}
     networks:
       - app-network
     depends_on:

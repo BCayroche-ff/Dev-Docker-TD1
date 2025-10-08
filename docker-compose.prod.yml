@@ -28,12 +28,13 @@ services:
     ports:
       - "${BACKEND_PORT:-3001}:3001"
     environment:
-      - PORT=${BACKEND_PORT:-3001}
+      - PORT=3001
       - DB_HOST=${DB_HOST:-postgres}
-      - DB_PORT=${DB_PORT:-5432}
+      - DB_PORT=5432
       - DB_USER=${POSTGRES_USER:-appuser}
       - DB_PASSWORD=${POSTGRES_PASSWORD:-apppassword}
       - DB_NAME=${POSTGRES_DB:-appdb}
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-change-in-production}
     networks:
       - app-network
     depends_on:
