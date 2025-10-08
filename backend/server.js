@@ -1,20 +1,30 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db');
+const { authenticateToken } = require('./middleware/auth');
+const authRoutes = require('./routes/auth');
+const gameRoutes = require('./routes/game');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
+/**
+ * Health check endpoint
+ * GET /api/health
+ *
+ * Checks if the server and database are running properly
+ * Returns server status and database connection status
+ */
 app.get('/api/health', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
     res.json({
       status: 'OK',
-      message: 'Server is running',
+      message: 'Tic-Tac-Toe API is running',
       database: 'Connected',
       timestamp: result.rows[0].now
     });
@@ -27,58 +37,34 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-app.get('/api/users', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM users ORDER BY id ASC');
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Failed to fetch users' });
-  }
+// Public routes (no authentication required)
+app.use('/api/auth', authRoutes);
+
+// Protected routes (authentication required)
+// Apply authenticateToken middleware to all /api/games routes
+app.use('/api/games', authenticateToken, gameRoutes);
+
+// Apply authenticateToken to the /me endpoint
+const authRouter = express.Router();
+authRouter.get('/me', authenticateToken, require('./routes/auth'));
+app.use('/api/auth', authRouter);
+
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
 
-app.post('/api/users', async (req, res) => {
-  const { name, email } = req.body;
-
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Name and email are required' });
-  }
-
-  try {
-    const result = await pool.query(
-      'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *',
-      [name, email]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error('Error creating user:', error);
-    res.status(500).json({ error: 'Failed to create user' });
-  }
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
-app.delete('/api/users/:id', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await pool.query(
-      'DELETE FROM users WHERE id = $1 RETURNING *',
-      [id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    res.json({ message: 'User deleted successfully', user: result.rows[0] });
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ error: 'Failed to delete user' });
-  }
-});
-
+// Start server only if this file is run directly (not imported for testing)
 if (require.main === module) {
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Backend server running on port ${PORT}`);
+    console.log(`Tic-Tac-Toe API server running on port ${PORT}`);
+    console.log(`Health check: http://localhost:${PORT}/api/health`);
   });
 }
 
