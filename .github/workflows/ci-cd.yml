@@ -76,7 +76,6 @@ jobs:
             type=ref,event=branch
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=raw,value=dev-latest,enable=${{ github.ref == 'refs/heads/develop' }}
 
       - name: Build and push backend image
         uses: docker/build-push-action@v5
@@ -98,7 +97,6 @@ jobs:
             type=ref,event=branch
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=raw,value=dev-latest,enable=${{ github.ref == 'refs/heads/develop' }}
 
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
@@ -126,7 +124,7 @@ jobs:
             echo "tag=latest" >> $GITHUB_OUTPUT
           else
             echo "env=development" >> $GITHUB_OUTPUT
-            echo "tag=dev-latest" >> $GITHUB_OUTPUT
+            echo "tag=develop" >> $GITHUB_OUTPUT
           fi
 
       - name: Deployment summary
