@@ -51,6 +51,12 @@ jobs:
         working-directory: ./frontend
         run: npm ci || npm install
 
+      - name: Initialize database schema
+        env:
+          PGPASSWORD: apppassword
+        run: |
+          psql -h localhost -U appuser -d appdb -f backend/init.sql
+
       - name: Run backend tests
         working-directory: ./backend
         env:
