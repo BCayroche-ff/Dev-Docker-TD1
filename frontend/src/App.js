@@ -48,6 +48,18 @@ function App() {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/api/users/${id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Failed to delete user');
+      setUsers(users.filter(user => user.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="App">
       <div className="container">
@@ -82,8 +94,16 @@ function App() {
             <ul className="user-list">
               {users.map(user => (
                 <li key={user.id} className="user-item">
-                  <strong>{user.name}</strong>
-                  <span>{user.email}</span>
+                  <div className="user-info">
+                    <strong>{user.name}</strong>
+                    <span>{user.email}</span>
+                  </div>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(user.id)}
+                  >
+                    Delete
+                  </button>
                 </li>
               ))}
             </ul>
