@@ -1,0 +1,248 @@
+/**
+ * Game Board styling
+ * Styles for the tic-tac-toe game interface
+ */
+
+.game-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.game-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.game-header {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.game-header h1 {
+  margin: 0;
+  color: #667eea;
+  font-size: 1.8rem;
+}
+
+.btn-back {
+  background: #667eea;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-back:hover {
+  background: #5568d3;
+}
+
+.game-content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .game-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.game-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.info-card p {
+  margin: 8px 0;
+  color: #666;
+}
+
+.info-card p.you {
+  color: #667eea;
+  font-weight: bold;
+}
+
+.status-waiting {
+  color: #ff9800;
+  font-weight: bold;
+}
+
+.status-playing {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.status-finished {
+  color: #667eea;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.turn-indicator {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.turn-indicator.my-turn {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+
+.player-symbol {
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  background: #f5f5f5;
+}
+
+.player-symbol.X {
+  color: #2196f3;
+}
+
+.player-symbol.O {
+  color: #f44336;
+}
+
+.board-container {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.error-banner {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 12px;
+  border-radius: 5px;
+  width: 100%;
+  text-align: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  grid-template-rows: repeat(3, 120px);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+@media (max-width: 480px) {
+  .board {
+    grid-template-columns: repeat(3, 90px);
+    grid-template-rows: repeat(3, 90px);
+    gap: 8px;
+  }
+}
+
+.cell {
+  background: #f5f5f5;
+  border: 3px solid #ddd;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.cell.clickable {
+  cursor: pointer;
+  background: white;
+}
+
+.cell.clickable:hover {
+  background: #e3f2fd;
+  border-color: #667eea;
+  transform: scale(1.05);
+}
+
+.cell.X {
+  color: #2196f3;
+}
+
+.cell.O {
+  color: #f44336;
+}
+
+.btn-new-game {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-new-game:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.game-error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  gap: 20px;
+}
+
+.game-error h2 {
+  font-size: 2rem;
+}
+
+.game-error p {
+  font-size: 1.2rem;
+}
